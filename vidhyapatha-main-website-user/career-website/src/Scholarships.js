@@ -563,6 +563,7 @@ export default function Scholarships() {
     </>
   );
 }*/
+
 import React, { useState, useEffect, useRef } from "react";
 import {
   MapPin,
@@ -963,6 +964,23 @@ export default function Scholarships() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
+                {/* OFFICIAL WEBSITE LINK */}
+{selectedSch.link && (
+  <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+    <p className="block text-xs text-gray-400 font-bold uppercase mb-1">
+      Official Website
+    </p>
+    <a
+      href={selectedSch.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-sm font-semibold text-blue-400 flex items-center gap-2 hover:underline"
+    >
+      Visit Scholarship Website <ExternalLink className="w-4 h-4" />
+    </a>
+  </div>
+)}
+
                 <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                   <span className="block text-xs text-gray-400 font-bold uppercase">Income Limit</span>
                   <span className="text-sm font-semibold text-gray-800">{selectedSch.income_limit ? `₹${selectedSch.income_limit.toLocaleString()}` : "No Limit"}</span>
@@ -998,3 +1016,5 @@ export default function Scholarships() {
     </div>
   );
 }
+
+
