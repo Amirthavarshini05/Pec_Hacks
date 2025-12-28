@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import logo from "./assets/logo.png";
+
 
 import {
   BrowserRouter as Router,
@@ -59,20 +61,33 @@ function Navbar({ onLogout }) {
 
     <nav className="backdrop-blur-md bg-white/80 shadow-sm border-b border-gray-200 flex items-center justify-between px-8 py-4 sticky top-0 z-50">
       {/* Left Navigation Items */}
-      <div className="flex items-center justify-between w-[55%]">
-        {navItems.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            style={{
-              color: location.pathname === item.to ? "#2563eb" : "#222",
-              fontWeight: location.pathname === item.to ? "bold" : "normal",
-            }}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </div>
+      {/* Left Section: Logo + Navigation */}
+<div className="flex items-center space-x-8 w-[55%]">
+  {/* Logo */}
+  <img
+    src={logo}
+    alt="VidhyaPatha Logo"
+    className="h-10 cursor-pointer"
+    onClick={() => navigate("/dashboard")}
+  />
+
+  {/* Navigation Items */}
+  <div className="flex items-center justify-between w-full">
+    {navItems.map((item) => (
+      <Link
+        key={item.to}
+        to={item.to}
+        style={{
+          color: location.pathname === item.to ? "#2563eb" : "#222",
+          fontWeight: location.pathname === item.to ? "bold" : "normal",
+        }}
+      >
+        {item.label}
+      </Link>
+    ))}
+  </div>
+</div>
+
 
       {/* Right Side Section */}
       <div className="flex items-center space-x-4 relative">

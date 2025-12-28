@@ -14,7 +14,7 @@ const AptitudeLanding = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 px-4">
       <div className="bg-white/80 backdrop-blur-lg shadow-xl rounded-2xl p-10 max-w-md w-full text-center">
         <h1 className="text-3xl font-extrabold text-gray-800 mb-4">
-          Aptitude Test
+          Interest Analyzer
         </h1>
 
         <p className="text-gray-600 mb-8">

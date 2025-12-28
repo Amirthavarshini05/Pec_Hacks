@@ -1059,7 +1059,7 @@ If you cannot comply with the schema, return an empty JSON object {}.`,
           {/* Header */}
           <div className="text-center">
             <h2 className="text-2xl font-bold text-green-700">
-              Career Aptitude Analysis
+              Interest Analysis
             </h2>
             
           </div>
