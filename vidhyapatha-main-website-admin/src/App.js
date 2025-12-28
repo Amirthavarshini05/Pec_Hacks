@@ -46,7 +46,6 @@ function Navbar({ onLogout }) {
 
   return (
     <nav className="backdrop-blur-md bg-white/80 shadow-sm border-b border-gray-200 flex items-center justify-between px-8 py-4 sticky top-0 z-50">
-      {/* Left Navigation Items */}
       <div className="flex items-center justify-between w-[55%]">
         {navItems.map((item) => (
           <Link
@@ -62,9 +61,7 @@ function Navbar({ onLogout }) {
         ))}
       </div>
 
-      {/* Right Side Section */}
       <div className="flex items-center space-x-4 relative">
-        {/* Bell */}
         <button className="relative">
           <Bell size={24} />
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
@@ -72,7 +69,6 @@ function Navbar({ onLogout }) {
           </span>
         </button>
 
-        {/* Profile Dropdown */}
         <div className="relative">
           <button onClick={() => setDropdownOpen(!dropdownOpen)}>
             <User size={28} className="cursor-pointer" />
@@ -88,16 +84,7 @@ function Navbar({ onLogout }) {
                 Profile
               </Link>
 
-              {/* Timeline removed */}
-              {/* 
-              <Link
-                to="/timeline"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                onClick={() => setDropdownOpen(false)}
-              >
-                Timeline
-              </Link>
-              */}
+              
 
               <Link
                 to="/about"
@@ -175,7 +162,6 @@ function App() {
       )}
 
       <Routes>
-        {/* Public Pages */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signin" element={<SignIn onLogin={handleLogin} />} />
         <Route path="/signup" element={<SignUp onSignup={handleLogin} />} />
@@ -192,7 +178,6 @@ function App() {
 
         <Route path="/RoadmapPage" element={<RoadmapPage />} />
 
-        {/* Private Pages */}
         <Route
           path="/dashboard"
           element={
@@ -247,17 +232,7 @@ function App() {
           }
         />
 
-        {/* Timeline route removed */}
-        {/* 
-        <Route
-          path="/timeline"
-          element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
-              <TimelineTracker />
-            </PrivateRoute>
-          }
-        />
-        */}
+       
 
         <Route
           path="/about"
@@ -307,3 +282,6 @@ export default function AppWrapper() {
     </Router>
   );
 }
+
+
+

@@ -1,4 +1,4 @@
-import React, { useCallback,useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { supabase } from "./supabase";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
@@ -30,7 +30,7 @@ const COLLEGE_FIELDS = {
   disable: "text",
   placements: "text",
   career: "text",
-  alumini: "text",   // match backend spelling
+  alumini: "text",
   clubs: "text",
   rating: "text",
   cutoff: "json",
@@ -41,17 +41,28 @@ const COLLEGE_FIELDS = {
   longitude: "text",
 };
 
-
 const emptyCollege = Object.keys(COLLEGE_FIELDS).reduce((a, k) => {
   a[k] = "";
   return a;
 }, {});
 
+/* ---------------- SAFE HELPERS ---------------- */
+const safeJoin = (val) => {
+  if (Array.isArray(val)) return val.join(", ");
+  if (typeof val === "string") return val;
+  return "—";
+};
+
+const normalizeToArray = (val) => {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string" && val.trim()) return [val];
+  return [];
+};
+
 export default function AdminColleges() {
   const [colleges, setColleges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -79,46 +90,52 @@ export default function AdminColleges() {
       .select("state,district,medium,stream")
       .then(({ data }) => {
         if (!data) return;
+
         setOptions({
           states: [...new Set(data.map(d => d.state).filter(Boolean))],
           districts: [...new Set(data.map(d => d.district).filter(Boolean))],
           mediums: [...new Set(data.map(d => d.medium).filter(Boolean))],
-          streams: [...new Set(data.flatMap(d => d.stream || []))],
+          streams: [
+            ...new Set(
+              data.flatMap(d => normalizeToArray(d.stream))
+            ),
+          ],
         });
       });
   }, []);
 
   /* ---------------- FETCH COLLEGES ---------------- */
-const fetchColleges = useCallback(async () => {
-  setLoading(true);
+  const fetchColleges = useCallback(async () => {
+    setLoading(true);
 
-  let q = supabase.from("colleges").select("*");
+    let q = supabase.from("colleges").select("*");
 
-  if (filters.state) q = q.eq("state", filters.state);
-  if (filters.district) q = q.eq("district", filters.district);
-  if (filters.medium) q = q.eq("medium", filters.medium);
-  if (filters.stream) q = q.contains("stream", [filters.stream]);
+    if (filters.state) q = q.eq("state", filters.state);
+    if (filters.district) q = q.eq("district", filters.district);
+    if (filters.medium) q = q.eq("medium", filters.medium);
+    if (filters.stream) q = q.contains("stream", [filters.stream]);
+    if (search) q = q.ilike("name", `%${search}%`);
 
-  if (search) q = q.ilike("name", `%${search}%`);
+    const { data } = await q;
+    setColleges(data || []);
+    setLoading(false);
+  }, [filters, search]);
 
-  const { data } = await q;
-  setColleges(data || []);
-  setLoading(false);
-}, [filters, search]); // ✅ dependencies here
-
-useEffect(() => {
-  fetchColleges(); // ✅ useEffect depends on fetchColleges
-}, [fetchColleges]);
-
-
+  useEffect(() => {
+    fetchColleges();
+  }, [fetchColleges]);
 
   /* ---------------- SAVE (ADD / EDIT) ---------------- */
   const saveCollege = async () => {
     const payload = {};
+
     Object.entries(COLLEGE_FIELDS).forEach(([k, t]) => {
       payload[k] =
         t === "json"
-          ? formData[k].split(",").map(v => v.trim()).filter(Boolean)
+          ? formData[k]
+              .split(",")
+              .map(v => v.trim())
+              .filter(Boolean)
           : formData[k];
     });
 
@@ -142,10 +159,14 @@ useEffect(() => {
   /* ---------------- EDIT ---------------- */
   const editCollege = (college) => {
     setEditingId(college.id);
+
     const filled = {};
     Object.keys(COLLEGE_FIELDS).forEach(k => {
-      filled[k] = Array.isArray(college[k]) ? college[k].join(", ") : college[k] || "";
+      filled[k] = Array.isArray(college[k])
+        ? college[k].join(", ")
+        : college[k] || "";
     });
+
     setFormData(filled);
     setShowForm(true);
   };
@@ -161,7 +182,7 @@ useEffect(() => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-indigo-700">🎓 Colleges</h1>
+        <h1 className="text-3xl font-bold text-indigo-700">Colleges</h1>
         <button
           onClick={() => {
             setShowForm(!showForm);
@@ -213,58 +234,51 @@ useEffect(() => {
       )}
 
       {/* -------- FILTERS -------- */}
-<div className="grid grid-cols-1 md:grid-cols-5 gap-4 bg-white p-4 rounded shadow mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 bg-white p-4 rounded shadow mb-6">
+        <input
+          type="text"
+          placeholder="🔍 Search college name"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border p-2 rounded"
+        />
 
-  {/* SEARCH BAR */}
-  <input
-    type="text"
-    placeholder="🔍 Search college name"
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    className="border p-2 rounded md:col-span-1"
-  />
+        <select
+          value={filters.state}
+          onChange={(e) => setFilters({ ...filters, state: e.target.value })}
+          className="border p-2 rounded"
+        >
+          <option value="">All state</option>
+          {options.states.map(v => <option key={v}>{v}</option>)}
+        </select>
 
-  {/* STATE */}
-  <select
-    value={filters.state}
-    onChange={(e) => setFilters({ ...filters, state: e.target.value })}
-    className="border p-2 rounded"
-  >
-    <option value="">All state</option>
-    {options.states.map(v => <option key={v}>{v}</option>)}
-  </select>
+        <select
+          value={filters.district}
+          onChange={(e) => setFilters({ ...filters, district: e.target.value })}
+          className="border p-2 rounded"
+        >
+          <option value="">All district</option>
+          {options.districts.map(v => <option key={v}>{v}</option>)}
+        </select>
 
-  {/* DISTRICT */}
-  <select
-    value={filters.district}
-    onChange={(e) => setFilters({ ...filters, district: e.target.value })}
-    className="border p-2 rounded"
-  >
-    <option value="">All district</option>
-    {options.districts.map(v => <option key={v}>{v}</option>)}
-  </select>
+        <select
+          value={filters.medium}
+          onChange={(e) => setFilters({ ...filters, medium: e.target.value })}
+          className="border p-2 rounded"
+        >
+          <option value="">All medium</option>
+          {options.mediums.map(v => <option key={v}>{v}</option>)}
+        </select>
 
-  {/* MEDIUM */}
-  <select
-    value={filters.medium}
-    onChange={(e) => setFilters({ ...filters, medium: e.target.value })}
-    className="border p-2 rounded"
-  >
-    <option value="">All medium</option>
-    {options.mediums.map(v => <option key={v}>{v}</option>)}
-  </select>
-
-  {/* STREAM */}
-  <select
-    value={filters.stream}
-    onChange={(e) => setFilters({ ...filters, stream: e.target.value })}
-    className="border p-2 rounded"
-  >
-    <option value="">All stream</option>
-    {options.streams.map(v => <option key={v}>{v}</option>)}
-  </select>
-</div>
-
+        <select
+          value={filters.stream}
+          onChange={(e) => setFilters({ ...filters, stream: e.target.value })}
+          className="border p-2 rounded"
+        >
+          <option value="">All stream</option>
+          {options.streams.map(v => <option key={v}>{v}</option>)}
+        </select>
+      </div>
 
       {/* -------- TABLE -------- */}
       <div className="bg-white rounded shadow">
@@ -287,7 +301,7 @@ useEffect(() => {
                   <td className="border p-2 font-semibold">{c.name}</td>
                   <td className="border p-2">{c.state}</td>
                   <td className="border p-2">{c.district}</td>
-                  <td className="border p-2">{c.stream?.join(", ")}</td>
+                  <td className="border p-2">{safeJoin(c.stream)}</td>
                   <td className="border p-2 flex gap-3">
                     <button onClick={() => editCollege(c)}>
                       <Pencil size={18} className="text-blue-600" />

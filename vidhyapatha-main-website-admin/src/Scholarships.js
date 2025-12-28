@@ -137,7 +137,7 @@ if (!editingId) delete payload.id; // Ensure 'disable' is not set when adding ne
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-indigo-700">
-          🎓 Scholarships
+          Scholarships
         </h1>
 
         <button
