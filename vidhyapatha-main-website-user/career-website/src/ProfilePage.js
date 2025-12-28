@@ -404,15 +404,11 @@ const Section = ({ title, done, onClick }) => (
   </div>
 );*/
 
-
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import ProfileSetupBasic from "./ProfileSetupBasic";
 import ProfileSetup10th from "./ProfileSetup10th";
 import ProfileSetup12th from "./ProfileSetup12th";
 import { supabase } from "./supabase";
-
-
 
 export default function ProfileSettings() {
   const [EMAIL, setEmail] = useState(
@@ -428,7 +424,6 @@ export default function ProfileSettings() {
   // ---------- CORE ----------
   const [qualification, setQualification] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editSection, setEditSection] = useState(null);
 
   // ---------- FLAGS ----------
   const [basicDone, setBasicDone] = useState(false);
@@ -456,14 +451,11 @@ export default function ProfileSettings() {
     setTwelfthData(null);
 
     setQualification(null);
-    setEditSection(null);
   };
-
 
   /* ===============================
      FETCHERS
      =============================== */
-
   const fetchBasicProfile = useCallback(async () => {
     try {
       const { data } = await supabase
@@ -492,7 +484,6 @@ export default function ProfileSettings() {
     } finally {
       if (isBootstrappingRef.current) {
         setSyncCount((p) => p + 1);
-        console.log("Basic profile fetched");
       }
     }
   }, [EMAIL]);
@@ -510,7 +501,6 @@ export default function ProfileSettings() {
     } finally {
       if (isBootstrappingRef.current) {
         setSyncCount((p) => p + 1);
-        console.log("10th profile fetched");
       }
     }
   }, [EMAIL]);
@@ -528,7 +518,6 @@ export default function ProfileSettings() {
     } finally {
       if (isBootstrappingRef.current) {
         setSyncCount((p) => p + 1);
-        console.log("12th profile fetched");
       }
     }
   }, [EMAIL]);
@@ -572,85 +561,38 @@ export default function ProfileSettings() {
      RENDER
      =============================== */
   return (
-    <div className="max-w-5xl mx-auto mt-10">
-      <h2 className="text-xl font-bold mb-4">Profile Setup Status</h2>
+    <div className="max-w-5xl mx-auto mt-10 space-y-6">
 
-      <Section
-        title="Profile Setup – Basic"
-        done={basicDone}
-        onClick={() =>
-          setEditSection(editSection === "basic" ? null : "basic")
-        }
-      />
-
-      {editSection === "basic" && (
+      {/* Basic Profile */}
+      <div className="p-6 bg-white shadow-md rounded-lg">
         <ProfileSetupBasic
           initialData={basicProfile}
           Email={EMAIL}
-          onComplete={async () => {
-            await fetchBasicProfile();
-            setEditSection(null);
-          }}
+          onComplete={fetchBasicProfile}
         />
-      )}
+      </div>
 
+      {/* 10th Profile */}
       {qualification === "10" && (
-        <>
-          <Section
-            title="Profile Setup – 10th"
-            done={tenthExists}
-            onClick={() =>
-              setEditSection(editSection === "10th" ? null : "10th")
-            }
+        <div className="p-6 bg-white shadow-md rounded-lg">
+          <ProfileSetup10th
+            initialData={tenthData}
+            email={EMAIL}
+            onComplete={fetch10thProfile}
           />
-
-          {editSection === "10th" && (
-            <ProfileSetup10th
-              initialData={tenthData}
-              email={EMAIL}
-              onComplete={async () => {
-                await fetch10thProfile();
-                setEditSection(null);
-              }}
-            />
-          )}
-        </>
+        </div>
       )}
 
+      {/* 12th Profile */}
       {qualification === "12" && (
-        <>
-          <Section
-            title="Profile Setup – 12th"
-            done={twelfthExists}
-            onClick={() =>
-              setEditSection(editSection === "12th" ? null : "12th")
-            }
+        <div className="p-6 bg-white shadow-md rounded-lg">
+          <ProfileSetup12th
+            initialData={twelfthData}
+            email={EMAIL}
+            onComplete={fetch12thProfile}
           />
-
-          {editSection === "12th" && (
-            <ProfileSetup12th
-              initialData={twelfthData}
-              email={EMAIL}
-              onComplete={async () => {
-                await fetch12thProfile();
-                setEditSection(null);
-              }}
-            />
-          )}
-        </>
+        </div>
       )}
     </div>
   );
 }
-
-/* ===============================
-   SECTION
-   =============================== */
-const Section = ({ title, done, onClick }) => (
-  <div className="flex justify-between items-center mb-3">
-    <span>{done ? "✔" : "🔒"} {title}</span>
-    <button onClick={onClick} className="text-blue-600 font-semibold">
-      {done ? " Edit" : "Complete Now"}
-    </button>
-  </div>
-);
