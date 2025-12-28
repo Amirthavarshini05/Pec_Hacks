@@ -133,7 +133,7 @@ const Dashboard = ({ adminName = "Admin" }) => {
         {/* Greeting */}
         <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-6 mb-6 shadow-md flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-3xl font-bold text-indigo-700">
               Welcome back, {adminName} 👋
             </h2>
             {department && (

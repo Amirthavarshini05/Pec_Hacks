@@ -128,12 +128,9 @@ const handleEdit = (resource) => {
         {/* HEADER */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">
+            <h1 className="text-3xl font-bold text-indigo-700">
               E-Books & Resources
             </h1>
-            <p className="text-slate-500">
-              Manage digital learning materials
-            </p>
           </div>
 
           {!showForm && (
