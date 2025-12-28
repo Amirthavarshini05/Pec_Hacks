@@ -544,14 +544,11 @@ export default function SuggestedCourses() {
                       </p>
                     )}
 
-                    <div className="mt-auto pt-4 border-t border-gray-200 flex justify-between items-center">
-                      <span className="text-xs text-indigo-500 font-bold uppercase tracking-wider">
-                        After {qualification === "10th" ? "10th" : "12th"}
+                   <div className="mt-auto pt-4 border-t border-gray-200">
+                   <span className="text-xs text-indigo-500 font-bold uppercase tracking-wider">
+                     After {qualification === "10th" ? "10th" : "12th"}
                       </span>
-                      <button className="text-sm font-bold text-indigo-600 hover:underline">
-                        View Details
-                      </button>
-                    </div>
+                  </div>
                   </div>
                 ))}
               </div>

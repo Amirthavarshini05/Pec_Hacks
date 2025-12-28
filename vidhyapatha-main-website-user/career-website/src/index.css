@@ -1,9 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* Paste this at the bottom of index.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-/* Custom Scrollbar for Modals */
+nav {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+nav * {
+  font-family: 'Montserrat', sans-serif !important;
+}
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
